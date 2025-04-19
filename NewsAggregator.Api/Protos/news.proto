@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+option csharp_namespace = "NewsAggregator.Api.Protos";
+
+package news;
+
+// The category service definition
+service CategoryService {
+  // Gets all available news categories
+  rpc GetCategories (CategoryRequest) returns (CategoryResponse);
+  
+  // Stream categories as they're updated in real time
+  rpc StreamCategories (CategoryRequest) returns (stream CategoryItem);
+  
+  // Classify an article into a category
+  rpc ClassifyArticle (ClassificationRequest) returns (ClassificationResponse);
+}
+
+// The request message for getting categories
+message CategoryRequest {
+  bool include_inactive = 1;
+  string provider_type = 2;
+}
+
+// The response message containing the list of categories
+message CategoryResponse {
+  repeated CategoryItem categories = 1;
+}
+
+// A category item
+message CategoryItem {
+  string id = 1;
+  string name = 2;
+  string slug = 3;
+  string description = 4;
+  string provider_type = 5;
+  bool is_active = 6;
+}
+
+// The request message for classifying an article
+message ClassificationRequest {
+  string title = 1;
+  string content = 2;
+  string source_name = 3;
+  string source_category = 4;
+}
+
+// The response message containing the classified category
+message ClassificationResponse {
+  string category_id = 1;
+  string category_name = 2;
+  float confidence_score = 3;
+  repeated CategoryProbability alternative_categories = 4;
+}
+
+// Probability score for each potential category
+message CategoryProbability {
+  string category_id = 1;
+  string category_name = 2;
+  float probability = 3;
+} 
